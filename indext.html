@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Reika Dynasty Public Broadcast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #4B0082; /* Deep indigo-purple */
+            --secondary-bg: #301934; /* Darker purple accent */
+            --text-primary: #FFFFFF;
+            --text-secondary: #E0E0E0;
+            --accent: #8A2BE2; /* Lighter purple for highlights */
+            --mist: rgba(255, 255, 255, 0.1); /* Subtle overlay */
+        }
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(to bottom, var(--secondary-bg), var(--primary-bg));
+            padding: 2rem 1rem;
+            text-align: center;
+            position: relative;
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+        .logo {
+            max-width: 300px;
+            height: auto;
+            margin: 0 auto 1rem;
+            display: block;
+        }
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin: 0.5rem 0;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px var(--mist);
+        }
+        .tagline {
+            font-style: italic;
+            font-size: 1.2rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+        nav {
+            background: var(--secondary-bg);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            margin: 0 1.5rem;
+            font-weight: bold;
+            transition: color 0.3s;
+            position: relative;
+        }
+        nav a:hover {
+            color: var(--accent);
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            border: 1px solid var(--mist);
+            backdrop-filter: blur(10px);
+        }
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            letter-spacing: 0.05em;
+        }
+        .player {
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem auto;
+            display: block;
+            background: var(--secondary-bg);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+        audio {
+            width: 100%;
+            outline: none;
+        }
+        .episodes-list {
+            display: grid;
+            gap: 1rem;
+        }
+        .episode {
+            background: var(--secondary-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            transition: transform 0.3s;
+        }
+        .episode:hover {
+            transform: translateX(5px);
+        }
+        .episode h3 {
+            margin: 0 0 0.5rem;
+            color: var(--accent);
+        }
+        .episode-meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        .episode-desc {
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+        .episode audio {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        #search {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--accent);
+            border-radius: 5px;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .host-img {
+            max-width: 250px;
+            height: auto;
+            border-radius: 50%;
+            display: block;
+            margin: 1rem auto;
+            border: 2px solid var(--accent);
+        }
+        .platforms {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        .platform-btn {
+            background: var(--accent);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .platform-btn:hover {
+            background: var(--secondary-bg);
+        }
+        form {
+            display: grid;
+            gap: 1rem;
+        }
+        input, textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--accent);
+            border-radius: 5px;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        button {
+            background: var(--accent);
+            color: var(--text-primary);
+            padding: 1rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: var(--secondary-bg);
+        }
+        .buried {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            text-align: right;
+            margin-top: 2rem;
+        }
+        footer {
+            background: var(--secondary-bg);
+            padding: 1rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            nav a { margin: 0 0.75rem; font-size: 0.9rem; }
+            .platforms { flex-direction: column; align-items: center; }
+        }
+        /* Subtle animation for eerie vibe */
+        @keyframes mist {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.3; }
+        }
+        section { animation: mist 5s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg" alt="The Reika Dynasty Public Broadcast Logo" class="logo">
+        <h1>The Reika Dynasty Public Broadcast</h1>
+        <p class="tagline">Stay vigilant. Stay graceful. And please—mind your posture.</p>
+    </header>
+    
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#episodes">Episodes</a>
+        <a href="#about">About</a>
+        <a href="#sponsors">Sponsors</a>
+        <a href="#events">Live Events</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    
+    <main>
+        <section id="home">
+            <h2>Welcome to Tsukihana Reika</h2>
+            <p>In this quiet, mystical town where the river chooses its own path and the moon lingers a touch too long, tune in for nightly announcements, eldritch weather reports, community warnings, deity sightings, and gentle reminders that reality is... flexible.</p>
+            <div class="player">
+                <h3>Latest Broadcast: The Moon Blinks, the River Sighs, and Someone Keeps Rearranging the Skeletons</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">December 1, 2025 • 5:00</p>
+                <audio controls>
+                    <source src="https://anchor.fm/s/10c3f3eac/podcast/play/111945769/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-11-1%2F413496087-44100-2-e396afbee3536.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+            <div class="platforms">
+                <a href="https://podcasts.apple.com/us/podcast/the-reika-dynasty-public-broadcast/id1799999999" class="platform-btn">Apple Podcasts</a>
+                <a href="https://open.spotify.com/show/10c3f3eac" class="platform-btn">Spotify</a>
+                <a href="https://music.amazon.com/podcasts/81a95042-3687-409f-b196-c1a29bf1c660" class="platform-btn">Amazon Music</a>
+                <a href="https://www.iheart.com/podcast/269-the-reika-dynasty-public-b-310002455/" class="platform-btn">iHeartRadio</a>
+            </div>
+            <p><a href="https://x.com/reikadynastypb" style="color: var(--accent);">Follow us on X</a> for whispers from the void.</p>
+        </section>
+        
+        <section id="episodes">
+            <h2>Episodes</h2>
+            <input type="text" id="search" placeholder="Search broadcasts by title or omen..." onkeyup="searchEpisodes()">
+            <div class="episodes-list" id="episodes-container">
+                <div class="episode">
+                    <h3>The Moon Blinks, the River Sighs, and Someone Keeps Rearranging the Skeletons</h3>
+                    <div class="episode-meta">December 1, 2025 • 5:00</div>
+                    <div class="episode-desc">Tonight’s broadcast brings unusual movement in the cemetery, a sighing sentient river, and another rooftop sighting of the jade-eyed woman of drifting shadows. The Host delivers calm, unsettling updates about nesting skeletons, emotional waterways, mysterious entities, and community announcements that are only mildly alarming. Mist will be heavy. The moon has blinked. Please remain indoors until the judgmental fog disperses.</div>
+                    <audio controls>
+                        <source src="https://anchor.fm/s/10c3f3eac/podcast/play/111945769/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-11-1%2F413496087-44100-2-e396afbee3536.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+                <div class="episode">
+                    <h3>Moonlight, Misdirection, and Mildly Concerning Omens</h3>
+                    <div class="episode-meta">November 30, 2025 • 3:42</div>
+                    <div class="episode-desc">In our debut broadcast, the Host welcomes listeners to Tsukihana Reika: a quiet, mystical town where the river chooses its own route, the moon watches with unusual interest, and a drifting jade-eyed woman has been seen dissolving into mist at the shrine. Tonight’s updates include sentient waterways, temple disturbances, wandering masks, and a set of community announcements that are only slightly dangerous if taken literally. Soft chimes, strange weather, and a whisper from the Runic Void set the tone for the world ahead.</div>
+                    <audio controls>
+                        <source src="https://anchor.fm/s/10c3f3eac/podcast/play/111903197/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-10-30%2F413442411-44100-2-8d9ae27fb528d.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+        </section>
+        
+        <section id="about">
+            <h2>About the Host</h2>
+            <img src="host.jpg" alt="Setsumi No Kami" class="host-img"> <!-- Replace with your host image file -->
+            <p>Setsumi No Kami (pronounced set-soo-me) serves as the ethereal voice guiding you through the veils of Tsukihana Reika. With a gaze that pierces the mist and words that echo like distant chimes, Setsumi delivers the broadcasts with unwavering poise—reminding us all to stay vigilant amid the shifting shadows.</p>
+            <p>Daily transmissions (weather and cosmic anomalies permitting) bring you the latest from our ever-watchful moon, the river's capricious moods, and the subtle rearrangements of reality itself.</p>
+            <div class="buried">
+                <p>In the archives, for the curious: Crafted by Alex Waters.</p>
+            </div>
+        </section>
+        
+        <section id="sponsors">
+            <h2>Sponsors</h2>
+            <p>The veils between worlds are thin, and so are our resources. If your establishment deals in jade incense, sentient teas, or fog-resistant umbrellas, inquire within. Gentle patronage keeps the broadcasts flowing.</p>
+            <!-- Add sponsor logos/links here as they arrive -->
+        </section>
+        
+        <section id="events">
+            <h2>Live Events</h2>
+            <p>Whispers of gatherings in the mist: Moonlit readings at the shrine (TBD). Deity sightings encouraged but not guaranteed. Check back as the river reveals its schedule.</p>
+            <!-- Populate with event details -->
+        </section>
+        
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>Share your omens, report misplaced skeletons, or propose guest appearances from the void. The Host listens... selectively.</p>
+            <form action="https://formspree.io/f/your-email" method="POST"> <!-- Replace with your Formspree or similar endpoint -->
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" rows="5" placeholder="Your Message (or omen)"></textarea>
+                <button type="submit">Send into the Mist</button>
+            </form>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 The Reika Dynasty Public Broadcast. All rights reserved. The moon approves this message.</p>
+    </footer>
+
+    <script>
+        function searchEpisodes() {
+            const input = document.getElementById('search').value.toLowerCase();
+            const episodes = document.querySelectorAll('.episode');
+            episodes.forEach(episode => {
+                const title = episode.querySelector('h3').textContent.toLowerCase();
+                const desc = episode.querySelector('.episode-desc').textContent.toLowerCase();
+                if (title.includes(input) || desc.includes(input)) {
+                    episode.style.display = 'block';
+                } else {
+                    episode.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
