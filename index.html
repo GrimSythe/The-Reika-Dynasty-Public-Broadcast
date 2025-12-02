@@ -6,35 +6,116 @@
     <title>The Reika Dynasty Public Broadcast</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital@0;1&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #2d142c;
-            --darker: #1a0f1a;
-            --text: #ede3e0;
-            --accent: #ba8bff;
-            --card: #3a1f3f;
-        }
-        body {margin:0;font-family:'Lora',serif;background:var(--bg);color:var(--text);line-height:1.7;}
-        header {background:var(--bg);text-align:center;padding:3rem 1rem 2rem;}
-        .logo {max-width:340px;margin-bottom:1rem;}
-        h1 {font-family:'Cinzel',serif;font-size:3.2rem;margin:0.5rem 0;color:var(--text);text-shadow:0 0 15px rgba(186,139,255,0.3);}
-        .tagline {font-size:1.3rem;font-style:italic;opacity:0.9;margin:1rem 0;}
-        nav {background:var(--darker);padding:1rem;text-align:center;}
-        nav a {color:var(--text);text-decoration:none;margin:0 1.8rem;font-weight:bold;font-size:1.1rem;}
-        nav a:hover {color:var(--accent);}
-        main {max-width:900px;margin:0 auto;padding:2rem 1rem;}
-        section {background:var(--card);margin-bottom:3rem;padding:2rem;border-radius:12px;border:1px solid rgba(186,139,255,0.2);}
-        h2 {font-family:'Cinzel',serif;text-align:center;font-size:2.2rem;color:var(--accent);margin-bottom:1.5rem;}
-        .player, .episode {background:var(--darker);padding:1.5rem;border-radius:10px;margin:1.5rem 0;}
-        audio {width:100%;margin-top:0.5rem;}
-        .platforms {display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin:2rem 0;}
-        .platform-btn {background:var(--accent);color:#1a0f1a;padding:0.8rem 1.8rem;border-radius:8px;text-decoration:none;font-weight:bold;}
-        .platform-btn:hover {background:#d8b4ff;}
-        .host-img {max-width:280px;border-radius:50%;border:3px solid var(--accent);display:block;margin:1.5rem auto;}
-        .buried {font-size:0.8rem;opacity:0.7;text-align:right;margin-top:2rem;}
-        footer {background:var(--darker);color:var(--text);text-align:center;padding:1.5rem;font-size:0.9rem;}
-        /* NO ANIMATIONS, NO FADING, NO MIST — CLEAN AND SOLID */
+        :root{--bg:#2d142c;--darker:#1a0f1a;--text:#ede3e0;--accent:#ba8bff;--card:#3a1f3f}
+        body{margin:0;font-family:'Lora',serif;background:var(--bg);color:var(--text);line-height:1.7}
+        header{background:var(--bg);text-align:center;padding:3rem 1rem 2rem}
+        .logo{max-width:340px;margin-bottom:1rem}
+        h1{font-family:'Cinzel',serif;font-size:3.2rem;margin:0.5rem 0;color:var(--text);text-shadow:0 0 15px rgba(186,139,255,0.3)}
+        .tagline{font-size:1.3rem;font-style:italic;opacity:0.9;margin:1rem 0}
+        nav{background:var(--darker);padding:1rem;text-align:center}
+        nav a{color:var(--text);text-decoration:none;margin:0 1.8rem;font-weight:bold;font-size:1.1rem}
+        nav a:hover{color:var(--accent)}
+        main{max-width:900px;margin:0 auto;padding:2rem 1rem}
+        section{background:var(--card);margin-bottom:3rem;padding:2rem;border-radius:12px;border:1px solid rgba(186,139,255,0.2)}
+        h2{font-family:'Cinzel',serif;text-align:center;font-size:2.2rem;color:var(--accent);margin-bottom:1.5rem}
+        .player,.episode{background:var(--darker);padding:1.5rem;border-radius:10px;margin:1.5rem 0}
+        audio{width:100%;margin-top:0.5rem}
+        .platforms{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin:2rem 0}
+        .platform-btn{background:var(--accent);color:#1a0f1a;padding:0.8rem 1.8rem;border-radius:8px;text-decoration:none;font-weight:bold}
+        .platform-btn:hover{background:#d8b4ff}
+        .host-img{max-width:280px;border-radius:50%;border:3px solid var(--accent);display:block;margin:1.5rem auto}
+        .buried{font-size:0.8rem;opacity:0.7;text-align:right;margin-top:2rem}
+        footer{background:var(--darker);color:var(--text);text-align:center;padding:1.5rem;font-size:0.9rem}
+        input,textarea,button{width:100%;padding:0.8rem;margin:0.5rem 0;background:var(--darker);border:1px solid var(--accent);border-radius:8px;color:var(--text);box-sizing:border-box}
+        button{background:var(--accent);color:#1a0f1a;cursor:pointer;font-weight:bold}
     </style>
 </head>
 <body>
     <header>
-        <img src="https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg" alt="Logo"
+        <img src="https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg" alt="Logo" class="logo">
+        <h1>The Reika Dynasty Public Broadcast</h1>
+        <p class="tagline">Stay vigilant. Stay graceful. And please—mind your posture.</p>
+    </header>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#episodes">Episodes</a>
+        <a href="#about">About</a>
+        <a href="#sponsors">Sponsors</a>
+        <a href="#events">Live Events</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <main>
+        <section id="home">
+            <h2>Welcome to Tsukihana Reika</h2>
+            <p>In this quiet, mystical town where the river chooses its own path and the moon lingers a touch too long, tune in for nightly announcements, eldritch weather reports, community warnings, deity sightings, and gentle reminders that reality is... flexible.</p>
+
+            <div class="player">
+                <strong>Latest Broadcast:</strong> The Moon Blinks, the River Sighs, and Someone Keeps Rearranging the Skeletons<br>
+                <small>December 1, 2025 • 5:00</small>
+                <audio controls>
+                    <source src="https://anchor.fm/s/10c3f3eac/podcast/play/111945769/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-11-1%2F413496087-44100-2-e396afbee3536.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+
+            <div class="platforms">
+                <a href="https://podcasts.apple.com/us/podcast/the-reika-dynasty-public-broadcast/id1799999999" class="platform-btn">Apple Podcasts</a>
+                <a href="https://open.spotify.com/show/10c3f3eac" class="platform-btn">Spotify</a>
+                <a href="https://music.amazon.com/podcasts/81a95042-3687-409f-b196-c1a29bf1c660" class="platform-btn">Amazon Music</a>
+                <a href="https://www.iheart.com/podcast/269-the-reika-dynasty-public-b-310002455/" class="platform-btn">iHeartRadio</a>
+            </div>
+            <p style="text-align:center"><a href="https://x.com/reikadynastypb" style="color:var(--accent)">Follow on X for whispers from the void</a></p>
+        </section>
+
+        <section id="episodes">
+            <h2>Episodes</h2>
+            <input type="text" id="search" placeholder="Search broadcasts..." onkeyup="searchEpisodes()">
+
+            <div class="episode">
+                <strong>The Moon Blinks, the River Sighs, and Someone Keeps Rearranging the Skeletons</strong><br>
+                <small>December 1, 2025 • 5:00</small>
+                <p style="font-style:italic;margin:0.8rem 0">Tonight’s broadcast brings unusual movement in the cemetery…</p>
+                <audio controls><source src="https://anchor.fm/s/10c3f3eac/podcast/play/111945769/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-11-1%2F413496087-44100-2-e396afbee3536.mp3" type="audio/mpeg"></audio>
+            </div>
+
+            <div class="episode">
+                <strong>Moonlight, Misdirection, and Mildly Concerning Omens</strong><br>
+                <small>November 30, 2025 • 3:42</small>
+                <p style="font-style:italic;margin:0.8rem 0">In our debut broadcast, the Host welcomes listeners to Tsukihana Reika…</p>
+                <audio controls><source src="https://anchor.fm/s/10c3f3eac/podcast/play/111903197/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-10-30%2F413442411-44100-2-8d9ae27fb528d.mp3" type="audio/mpeg"></audio>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>About the Host</h2>
+            <img src="host.jpg" alt="Setsumi No Kami" class="host-img">
+            <p>Setsumi No Kami (pronounced set-soo-me) serves as the ethereal voice guiding you through the veils of Tsukihana Reika. With a gaze that pierces the mist and words that echo like distant chimes, Setsumi delivers the broadcasts with unwavering poise.</p>
+            <p>Daily transmissions (weather and cosmic anomalies permitting) bring you the latest from our ever-watchful moon and the river's capricious moods.</p>
+            <div class="buried">Created by Alex Waters</div>
+        </section>
+
+        <section id="sponsors"><h2>Sponsors</h2><p>The veils are thin and so is the budget. Inquire within.</p></section>
+        <section id="events"><h2>Live Events</h2><p>Coming when the moon aligns (TBD).</p></section>
+
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>Report omens or misplaced skeletons:</p>
+            <form action="https://formspree.io/f/your-form-id-here" method="POST">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <textarea name="message" rows="5" placeholder="Your omen..." required></textarea>
+                <button type="submit">Send into the Mist</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 The Reika Dynasty Public Broadcast • The moon approves this message.</p>
+    </footer>
+
+    <script>
+        function searchEpisodes(){let a=document.getElementById('search').value.toLowerCase(),b=document.querySelectorAll('.episode');b.forEach(c=>{c.textContent.toLowerCase().includes(a)?c.style.display='':c.style.display='none'})}
+    </script>
+</body>
+</html>
