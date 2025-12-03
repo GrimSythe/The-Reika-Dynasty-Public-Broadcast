@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>The Reika Dynasty Public Broadcast</title>
+    <link>https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/</link>
+    <atom:link href="https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Stay vigilant. Stay graceful. And please—mind your posture.</description>
+    <itunes:author>Setsumi No Kami</itunes:author>
+    <itunes:image href="https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg"/>
+    <itunes:category text="Fiction"/>
+    <itunes:category text="Science Fiction"/>
+    <itunes:explicit>no</itunes:explicit>
+    <language>en</language>
+    <itunes:owner>
+      <itunes:name>Alex Waters</itunes:name>
+      <itunes:email>thomas.waters10606@gmail.com</itunes:email> <!-- put your real email here -->
+    </itunes:owner>
+
+    <!-- Episode 1 -->
+    <item>
+      <title>The Moon Blinks, the River Sighs, and Someone Keeps Rearranging the Skeletons</title>
+      <link>https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/</link>
+      <guid isPermaLink="false">reika-2025-12-01</guid>
+      <pubDate>Mon, 01 Dec 2025 05:00:00 GMT</pubDate>
+      <enclosure url="https://anchor.fm/s/10c3f3eac/podcast/play/111945769/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-11-1%2F413496087-44100-2-e396afbee3536.mp3" length="999999" type="audio/mpeg"/>
+      <itunes:duration>5:00</itunes:duration>
+      <description>Tonight’s broadcast brings unusual movement in the cemetery, a sighing sentient river, and another rooftop sighting of the jade-eyed woman of drifting shadows...</description>
+    </item>
+
+    <!-- Episode 0 (debut) -->
+    <item>
+      <title>Moonlight, Misdirection, and Mildly Concerning Omens</title>
+      <link>https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/</link>
+      <guid isPermaLink="false">reika-2025-11-30</guid>
+      <pubDate>Sun, 30 Nov 2025 03:42:00 GMT</pubDate>
+      <enclosure url="https://anchor.fm/s/10c3f3eac/podcast/play/111903197/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-10-30%2F413442411-44100-2-8d9ae27fb528d.mp3" length="999999" type="audio/mpeg"/>
+      <itunes:duration>3:42</itunes:duration>
+      <description>In our debut broadcast, the Host welcomes listeners to Tsukihana Reika...</description>
+    </item>
+
+  </channel>
+</rss>
