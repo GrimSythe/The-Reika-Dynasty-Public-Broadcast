@@ -1,0 +1,99 @@
+name: Update Podcast Feed
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # Runs every 15 minutes (or change to '0 * * * *' for hourly)
+  workflow_dispatch:  # Lets you manually trigger it too
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install feedparser lxml
+
+    - name: Update feed.xml
+      run: python update_feed.py
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add feed.xml
+        if git diff --staged --quiet; then
+          echo "No changes"
+        else
+          git commit -m "Auto-update podcast feed [$(date)]"
+          git push
+        fi
+
+    - name: Create update_feed.py
+      run: |
+        cat > update_feed.py << 'EOF'
+import feedparser
+import xml.etree.ElementTree as ET
+from datetime import datetime
+from urllib.parse import quote
+
+# Parse Anchor RSS
+rss_url = 'https://anchor.fm/s/10c3f3eac/podcast/rss'
+feed = feedparser.parse(rss_url)
+
+# Build new XML
+root = ET.Element('rss', version='2.0')
+root.set('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd')
+root.set('xmlns:atom', 'http://www.w3.org/2005/Atom')
+
+channel = ET.SubElement(root, 'channel')
+ET.SubElement(channel, 'title').text = 'The Reika Dynasty Public Broadcast'
+ET.SubElement(channel, 'link').text = 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/'
+atom_link = ET.SubElement(channel, 'atom:link')
+atom_link.set('href', 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/feed.xml')
+atom_link.set('rel', 'self')
+atom_link.set('type', 'application/rss+xml')
+ET.SubElement(channel, 'description').text = 'Stay vigilant. Stay graceful. And please—mind your posture.'
+ET.SubElement(channel, 'itunes:author').text = 'Setsumi No Kami'
+ET.SubElement(channel, 'itunes:image', href='https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg')
+ET.SubElement(channel, 'itunes:category', text='Fiction')
+ET.SubElement(channel, 'itunes:category', text='Science Fiction')
+ET.SubElement(channel, 'itunes:explicit').text = 'no'
+ET.SubElement(channel, 'language').text = 'en'
+owner = ET.SubElement(channel, 'itunes:owner')
+ET.SubElement(owner, 'itunes:name').text = 'Alex Waters'
+ET.SubElement(owner, 'itunes:email').text = 'thomas.waters10606@gmail.com'  
+
+for entry in feed.entries[-10:]:  # Last 10 episodes (adjust if needed)
+    item = ET.SubElement(channel, 'item')
+    ET.SubElement(item, 'title').text = entry.title
+    ET.SubElement(item, 'link').text = entry.link
+    ET.SubElement(item, 'guid', isPermaLink='false').text = f"reika-{datetime.strptime(entry.published, '%a, %d %b %Y %H:%M:%S %z').strftime('%Y-%m-%d')}"
+    ET.SubElement(item, 'pubDate').text = entry.published
+    if hasattr(entry, 'enclosures') and entry.enclosures:
+        enc = entry.enclosures[0]
+        ET.SubElement(item, 'enclosure', url=enc.href, length=str(enc.length or ''), type=enc.type).text = ''
+    duration = entry.itunes_duration if hasattr(entry, 'itunes_duration') else ''
+    if duration:
+        ET.SubElement(item, 'itunes:duration').text = duration
+    ET.SubElement(item, 'description').text = entry.summary
+
+# Write XML (pretty print)
+rough_string = ET.tostring(root, 'unicode')
+reparsed = ET.XML(rough_string.encode('utf-8'))
+ET.indent(reparsed, space='  ', level=0)
+tree = ET.ElementTree(reparsed)
+tree.write('feed.xml', encoding='utf-8', xml_declaration=True)
+
+print('Feed updated successfully')
+EOF
+
+    - name: Run the update script
+      run: python update_feed.py
