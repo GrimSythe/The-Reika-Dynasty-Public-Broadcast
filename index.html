@@ -69,23 +69,50 @@
         </section>
 
         <section id="episodes">
-            <h2>Episodes</h2>
-            <input type="text" id="search" placeholder="Search broadcasts..." onkeyup="searchEpisodes()">
+    <h2>Episodes</h2>
+    <input type="text" id="search" placeholder="Search broadcasts..." onkeyup="searchEpisodes()">
 
-            <div class="episode">
-                <strong>The Moon Blinks, the River Sighs, and Someone Keeps Rearranging the Skeletons</strong><br>
-                <small>December 1, 2025 • 5:00</small>
-                <p style="font-style:italic;margin:0.8rem 0">Tonight’s broadcast brings unusual movement in the cemetery…</p>
-                <audio controls><source src="https://anchor.fm/s/10c3f3eac/podcast/play/111945769/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-11-1%2F413496087-44100-2-e396afbee3536.mp3" type="audio/mpeg"></audio>
-            </div>
+    <div id="episode-list">
+        <p style="text-align:center; opacity:0.8;">Loading the latest whispers from the void...</p>
+    </div>
+</section>
 
-            <div class="episode">
-                <strong>Moonlight, Misdirection, and Mildly Concerning Omens</strong><br>
-                <small>November 30, 2025 • 3:42</small>
-                <p style="font-style:italic;margin:0.8rem 0">In our debut broadcast, the Host welcomes listeners to Reika…</p>
-                <audio controls><source src="https://anchor.fm/s/10c3f3eac/podcast/play/111903197/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-10-30%2F413442411-44100-2-8d9ae27fb528d.mp3" type="audio/mpeg"></audio>
-            </div>
-        </section>
+<script>
+async function loadEpisodes() {
+    const response = await fetch('feed.xml');
+    const text = await response.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "text/xml");
+    const items = xml.querySelectorAll('item');
+    const container = document.getElementById('episode-list');
+    container.innerHTML = '';
+
+    items.forEach(item => {
+        const title = item.querySelector('title').textContent;
+        const date = new Date(item.querySelector('pubDate').textContent).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+        const duration = item.querySelector('duration')?.textContent || '';
+        const desc = item.querySelector('description').textContent.split('\n')[0];
+        const audioUrl = item.querySelector('enclosure').getAttribute('url');
+
+        const ep = document.createElement('div');
+        ep.className = 'episode';
+        ep.innerHTML = `
+            <strong>${title}</strong><br>
+            <small>${date}${duration ? ' • ' + duration : ''}</small>
+            <p style="font-style:italic;margin:0.8rem 0">${desc}...</p>
+            <audio controls><source src="${audioUrl}" type="audio/mpeg"></audio>
+        `;
+        container.appendChild(ep);
+    });
+}
+loadEpisodes();
+
+// Keep the old search function
+function searchEpisodes(){
+    let a=document.getElementById('search').value.toLowerCase(),b=document.querySelectorAll('.episode');
+    b.forEach(c=>{c.textContent.toLowerCase().includes(a)?c.style.display='':c.style.display='none'});
+}
+</script>
 
         <section id="about">
             <h2>About the Host</h2>
