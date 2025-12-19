@@ -2,98 +2,92 @@ name: Update Podcast Feed
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Runs every 15 minutes (or change to '0 * * * *' for hourly)
-  workflow_dispatch:  # Lets you manually trigger it too
+    - cron: '*/15 * * * *'  # Every 15 minutes
+  workflow_dispatch:
 
 jobs:
-  update:
+  update-feed:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    - name: Install dependencies
-      run: pip install feedparser lxml
+      - name: Install dependencies
+        run: pip install feedparser
 
-    - name: Update feed.xml
-      run: python update_feed.py
+      - name: Generate and update feed.xml
+        run: |
+          python - <<'EOF'
+          import feedparser
+          from xml.etree.ElementTree import Element, SubElement, Comment, tostring, ElementTree
+          from xml.dom import minidom
+          import datetime
 
-    - name: Commit changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add feed.xml
-        if git diff --staged --quiet; then
-          echo "No changes"
-        else
-          git commit -m "Auto-update podcast feed [$(date)]"
-          git push
-        fi
+          # Your Anchor RSS
+          anchor_rss = 'https://anchor.fm/s/10c3f3eac/podcast/rss'
+          feed = feedparser.parse(anchor_rss)
 
-    - name: Create update_feed.py
-      run: |
-        cat > update_feed.py << 'EOF'
-import feedparser
-import xml.etree.ElementTree as ET
-from datetime import datetime
-from urllib.parse import quote
+          # Root
+          rss = Element('rss', {'version': '2.0'})
+          rss.set('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd')
+          rss.set('xmlns:atom', 'http://www.w3.org/2005/Atom')
 
-# Parse Anchor RSS
-rss_url = 'https://anchor.fm/s/10c3f3eac/podcast/rss'
-feed = feedparser.parse(rss_url)
+          channel = SubElement(rss, 'channel')
 
-# Build new XML
-root = ET.Element('rss', version='2.0')
-root.set('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd')
-root.set('xmlns:atom', 'http://www.w3.org/2005/Atom')
+          # Channel metadata
+          titles = ['title', 'link', 'description', 'itunes:author', 'language']
+          values = [
+            'The Reika Dynasty Public Broadcast',
+            'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/',
+            'Stay vigilant. Stay graceful. And please—mind your posture.',
+            'Setsumi No Kami',
+            'en'
+          ]
+          for t, v in zip(titles, values):
+            SubElement(channel, t).text = v
 
-channel = ET.SubElement(root, 'channel')
-ET.SubElement(channel, 'title').text = 'The Reika Dynasty Public Broadcast'
-ET.SubElement(channel, 'link').text = 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/'
-atom_link = ET.SubElement(channel, 'atom:link')
-atom_link.set('href', 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/feed.xml')
-atom_link.set('rel', 'self')
-atom_link.set('type', 'application/rss+xml')
-ET.SubElement(channel, 'description').text = 'Stay vigilant. Stay graceful. And please—mind your posture.'
-ET.SubElement(channel, 'itunes:author').text = 'Setsumi No Kami'
-ET.SubElement(channel, 'itunes:image', href='https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg')
-ET.SubElement(channel, 'itunes:category', text='Fiction')
-ET.SubElement(channel, 'itunes:category', text='Science Fiction')
-ET.SubElement(channel, 'itunes:explicit').text = 'no'
-ET.SubElement(channel, 'language').text = 'en'
-owner = ET.SubElement(channel, 'itunes:owner')
-ET.SubElement(owner, 'itunes:name').text = 'Alex Waters'
-ET.SubElement(owner, 'itunes:email').text = 'thomas.waters10606@gmail.com'  
+          SubElement(channel, 'atom:link', {
+            'href': 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/feed.xml',
+            'rel': 'self',
+            'type': 'application/rss+xml'
+          })
 
-for entry in reversed(feed.entries[:20]):  # All episodes, oldest first (safer order)
-    item = ET.SubElement(channel, 'item')
-    ET.SubElement(item, 'title').text = entry.title
-    ET.SubElement(item, 'link').text = entry.link
-    ET.SubElement(item, 'guid', isPermaLink='false').text = f"reika-{datetime.strptime(entry.published, '%a, %d %b %Y %H:%M:%S %z').strftime('%Y-%m-%d')}"
-    ET.SubElement(item, 'pubDate').text = entry.published
-    if hasattr(entry, 'enclosures') and entry.enclosures:
-        enc = entry.enclosures[0]
-        ET.SubElement(item, 'enclosure', url=enc.href, length=str(enc.length or ''), type=enc.type).text = ''
-    duration = entry.itunes_duration if hasattr(entry, 'itunes_duration') else ''
-    if duration:
-        ET.SubElement(item, 'itunes:duration').text = duration
-    ET.SubElement(item, 'description').text = entry.summary
+          SubElement(channel, 'itunes:image', {'href': 'https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg'})
 
-# Write XML (pretty print)
-rough_string = ET.tostring(root, 'unicode')
-reparsed = ET.XML(rough_string.encode('utf-8'))
-ET.indent(reparsed, space='  ', level=0)
-tree = ET.ElementTree(reparsed)
-tree.write('feed.xml', encoding='utf-8', xml_declaration=True)
+          # Categories
+          for cat in ['Fiction', 'Science Fiction']:
+            SubElement(channel, 'itunes:category', {'text': cat})
 
-print('Feed updated successfully')
-EOF
+          SubElement(channel, 'itunes:explicit').text = 'no'
 
-    - name: Run the update script
-      run: python update_feed.py
+          owner = SubElement(channel, 'itunes:owner')
+          SubElement(owner, 'itunes:name').text = 'Alex Waters'
+          SubElement(owner, 'itunes:email').text = 'your-email@example.com'  # <-- CHANGE TO YOUR EMAIL
+
+          # Episodes (all of them, oldest first)
+          for entry in reversed(feed.entries):
+            item = SubElement(channel, 'item')
+            SubElement(item, 'title').text = entry.title
+            SubElement(item, 'link').text = entry.link
+            pub_date = datetime.datetime.strptime(entry.published, '%a, %d %b %Y %H:%M:%S %Z').strftime('%Y-%m-%d')
+            SubElement(item, 'guid', {'isPermaLink': 'false'}).text = f"reika-{pub_date}"
+            SubElement(item, 'pubDate').text = entry.published
+
+            if entry.enclosures:
+              enc = entry.enclosures[0]
+              SubElement(item, 'enclosure', {'url': enc.href, 'length': enc.get('length', '0'), 'type': enc.type})
+
+            if hasattr(entry, 'itunes_duration'):
+              SubElement(item, 'itunes:duration').text = entry.itunes_duration
+
+            desc = SubElement(item, 'description')
+            desc.text = f"<![CDATA[{entry.summary}]]>"
+
+          # Pretty print
+          rough = tostring(rss, 'unicode')
+          reparsed = minidom.parseString(rough)
+          pretty = repar
