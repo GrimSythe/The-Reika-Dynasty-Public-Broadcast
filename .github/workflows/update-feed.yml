@@ -71,7 +71,7 @@ owner = ET.SubElement(channel, 'itunes:owner')
 ET.SubElement(owner, 'itunes:name').text = 'Alex Waters'
 ET.SubElement(owner, 'itunes:email').text = 'thomas.waters10606@gmail.com'  
 
-for entry in feed.entries[-10:]:  # Last 10 episodes (adjust if needed)
+for entry in reversed(feed.entries[:20]):  # All episodes, oldest first (safer order)
     item = ET.SubElement(channel, 'item')
     ET.SubElement(item, 'title').text = entry.title
     ET.SubElement(item, 'link').text = entry.link
