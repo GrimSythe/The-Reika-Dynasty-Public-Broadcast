@@ -2,7 +2,7 @@ name: Update Podcast Feed
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Every 15 minutes
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -16,78 +16,95 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install feedparser
         run: pip install feedparser
 
-      - name: Generate and update feed.xml
+      - name: Generate fresh feed.xml
         run: |
           python - <<'EOF'
           import feedparser
-          from xml.etree.ElementTree import Element, SubElement, Comment, tostring, ElementTree
+          from xml.etree.ElementTree import Element, SubElement, ElementTree
           from xml.dom import minidom
           import datetime
+          import re
 
-          # Your Anchor RSS
           anchor_rss = 'https://anchor.fm/s/10c3f3eac/podcast/rss'
           feed = feedparser.parse(anchor_rss)
 
-          # Root
+          print(f"Found {len(feed.entries)} episodes in Anchor feed")
+
           rss = Element('rss', {'version': '2.0'})
           rss.set('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd')
           rss.set('xmlns:atom', 'http://www.w3.org/2005/Atom')
 
           channel = SubElement(rss, 'channel')
 
-          # Channel metadata
-          titles = ['title', 'link', 'description', 'itunes:author', 'language']
-          values = [
-            'The Reika Dynasty Public Broadcast',
-            'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/',
-            'Stay vigilant. Stay graceful. And please—mind your posture.',
-            'Setsumi No Kami',
-            'en'
-          ]
-          for t, v in zip(titles, values):
-            SubElement(channel, t).text = v
-
-          SubElement(channel, 'atom:link', {
-            'href': 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/feed.xml',
-            'rel': 'self',
-            'type': 'application/rss+xml'
-          })
-
+          # Channel info
+          SubElement(channel, 'title').text = 'The Reika Dynasty Public Broadcast'
+          SubElement(channel, 'link').text = 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/'
+          SubElement(channel, 'description').text = 'Stay vigilant. Stay graceful. And please—mind your posture.'
+          SubElement(channel, 'language').text = 'en'
+          SubElement(channel, 'itunes:author').text = 'Setsumi No Kami'
+          SubElement(channel, 'itunes:explicit').text = 'no'
           SubElement(channel, 'itunes:image', {'href': 'https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg'})
 
-          # Categories
-          for cat in ['Fiction', 'Science Fiction']:
-            SubElement(channel, 'itunes:category', {'text': cat})
-
-          SubElement(channel, 'itunes:explicit').text = 'no'
+          atom_link = SubElement(channel, 'atom:link')
+          atom_link.set('href', 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/feed.xml')
+          atom_link.set('rel', 'self')
+          atom_link.set('type', 'application/rss+xml')
 
           owner = SubElement(channel, 'itunes:owner')
           SubElement(owner, 'itunes:name').text = 'Alex Waters'
-          SubElement(owner, 'itunes:email').text = 'your-email@example.com'  # <-- CHANGE TO YOUR EMAIL
+          SubElement(owner, 'itunes:email').text = 'thomas.waters10606@gmail.com'  # your email
 
-          # Episodes (all of them, oldest first)
+          # Episodes - all of them, oldest first
           for entry in reversed(feed.entries):
             item = SubElement(channel, 'item')
             SubElement(item, 'title').text = entry.title
-            SubElement(item, 'link').text = entry.link
-            pub_date = datetime.datetime.strptime(entry.published, '%a, %d %b %Y %H:%M:%S %Z').strftime('%Y-%m-%d')
-            SubElement(item, 'guid', {'isPermaLink': 'false'}).text = f"reika-{pub_date}"
-            SubElement(item, 'pubDate').text = entry.published
+            SubElement(item, 'link').text = entry.link or 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/'
 
+            # Safe pubDate parsing
+            try:
+              pub_dt = datetime.datetime.strptime(entry.published, '%a, %d %b %Y %H:%M:%S %Z')
+            except:
+              pub_dt = datetime.datetime.now()
+            pub_str = pub_dt.strftime('%a, %d %b %Y %H:%M:%S %Z')
+            date_str = pub_dt.strftime('%Y-%m-%d')
+
+            SubElement(item, 'guid', {'isPermaLink': 'false'}).text = f"reika-{date_str}"
+            SubElement(item, 'pubDate').text = pub_str
+
+            # Enclosure
             if entry.enclosures:
               enc = entry.enclosures[0]
-              SubElement(item, 'enclosure', {'url': enc.href, 'length': enc.get('length', '0'), 'type': enc.type})
+              attrs = {'url': enc.href, 'type': enc.type}
+              if enc.get('length'):
+                attrs['length'] = enc.length
+              SubElement(item, 'enclosure', attrs)
 
+            # Duration
             if hasattr(entry, 'itunes_duration'):
               SubElement(item, 'itunes:duration').text = entry.itunes_duration
 
+            # Description
             desc = SubElement(item, 'description')
-            desc.text = f"<![CDATA[{entry.summary}]]>"
+            desc.text = f"<![CDATA[{entry.summary or ''}]]>"
 
-          # Pretty print
-          rough = tostring(rss, 'unicode')
+          # Pretty XML
+          rough = ElementTree.tostring(rss, 'unicode')
           reparsed = minidom.parseString(rough)
-          pretty = repar
+          pretty = reparsed.toprettyxml(indent="  ")
+
+          with open('feed.xml', 'w', encoding='utf-8') as f:
+            f.write(pretty)
+
+          print("feed.xml written successfully with all episodes")
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add feed.xml
+          git commit -m "Auto-update feed with all episodes" || echo "No changes"
+          git push || echo "No push needed"
