@@ -23,15 +23,14 @@ jobs:
         run: |
           python - <<'EOF'
           import feedparser
-          from xml.etree.ElementTree import Element, SubElement, ElementTree
+          from xml.etree.ElementTree import Element, SubElement
           from xml.dom import minidom
           import datetime
-          import re
 
           anchor_rss = 'https://anchor.fm/s/10c3f3eac/podcast/rss'
           feed = feedparser.parse(anchor_rss)
 
-          print(f"Found {len(feed.entries)} episodes in Anchor feed")
+          print(f"Successfully parsed feed - found {len(feed.entries)} episodes")
 
           rss = Element('rss', {'version': '2.0'})
           rss.set('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd')
@@ -39,7 +38,7 @@ jobs:
 
           channel = SubElement(rss, 'channel')
 
-          # Channel info
+          # Channel metadata (fixed)
           SubElement(channel, 'title').text = 'The Reika Dynasty Public Broadcast'
           SubElement(channel, 'link').text = 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/'
           SubElement(channel, 'description').text = 'Stay vigilant. Stay graceful. And please—mind your posture.'
@@ -55,21 +54,27 @@ jobs:
 
           owner = SubElement(channel, 'itunes:owner')
           SubElement(owner, 'itunes:name').text = 'Alex Waters'
-          SubElement(owner, 'itunes:email').text = 'thomas.waters10606@gmail.com'  # your email
+          SubElement(owner, 'itunes:email').text = 'thomas.waters10606@gmail.com'  # update if needed
 
-          # Episodes - all of them, oldest first
+          # Episodes - all, oldest first
           for entry in reversed(feed.entries):
+            print(f"Adding episode: {entry.title}")
+
             item = SubElement(channel, 'item')
             SubElement(item, 'title').text = entry.title
-            SubElement(item, 'link').text = entry.link or 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/'
+            SubElement(item, 'link').text = entry.get('link', 'https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/')
 
-            # Safe pubDate parsing
+            # Safe pubDate - strip timezone if present
+            pub_str = entry.published
             try:
-              pub_dt = datetime.datetime.strptime(entry.published, '%a, %d %b %Y %H:%M:%S %Z')
-            except:
-              pub_dt = datetime.datetime.now()
-            pub_str = pub_dt.strftime('%a, %d %b %Y %H:%M:%S %Z')
-            date_str = pub_dt.strftime('%Y-%m-%d')
+              # Remove timezone for parsing
+              pub_clean = pub_str.rsplit(' ', 1)[0] if ' ' in pub_str else pub_str
+              pub_dt = datetime.datetime.strptime(pub_clean, '%a, %d %b %Y %H:%M:%S')
+              date_str = pub_dt.strftime('%Y-%m-%d')
+            except Exception as e:
+              print(f"Date parse error: {e} - using fallback")
+              date_str = datetime.datetime.now().strftime('%Y-%m-%d')
+              pub_str = datetime.datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
 
             SubElement(item, 'guid', {'isPermaLink': 'false'}).text = f"reika-{date_str}"
             SubElement(item, 'pubDate').text = pub_str
@@ -78,33 +83,31 @@ jobs:
             if entry.enclosures:
               enc = entry.enclosures[0]
               attrs = {'url': enc.href, 'type': enc.type}
-              if enc.get('length'):
+              if 'length' in enc:
                 attrs['length'] = enc.length
               SubElement(item, 'enclosure', attrs)
 
             # Duration
-            if hasattr(entry, 'itunes_duration'):
+            if 'itunes_duration' in entry:
               SubElement(item, 'itunes:duration').text = entry.itunes_duration
 
             # Description
+            summary = entry.get('summary', '') or ''
             desc = SubElement(item, 'description')
-            desc.text = f"<![CDATA[{entry.summary or ''}]]>"
+            desc.text = f"<![CDATA[{summary}]]>"
 
-          # Pretty XML
-          rough = ElementTree.tostring(rss, 'unicode')
-          reparsed = minidom.parseString(rough)
-          pretty = reparsed.toprettyxml(indent="  ")
-
+          # Pretty print and write
+          rough = minidom.parseString(ElementTree.tostring(rss, 'unicode')).toprettyxml(indent="  ")
           with open('feed.xml', 'w', encoding='utf-8') as f:
-            f.write(pretty)
+            f.write(rough)
 
-          print("feed.xml written successfully with all episodes")
+          print("feed.xml successfully written with all episodes")
           EOF
 
-      - name: Commit and push
+      - name: Commit and push if changed
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git add feed.xml
-          git commit -m "Auto-update feed with all episodes" || echo "No changes"
-          git push || echo "No push needed"
+          git add feed.xml || echo "No file to add"
+          git commit -m "Auto-update podcast feed" || echo "No changes to commit"
+          git push || echo "No changes to push"
