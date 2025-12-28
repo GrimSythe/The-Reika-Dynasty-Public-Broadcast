@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>The Reika Dynasty Public Broadcast</title>
+    <link>https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/</link>
+    <atom:link href="https://grimsythe.github.io/The-Reika-Dynasty-Public-Broadcast/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Stay vigilant. Stay graceful. And please—mind your posture.</description>
+    <itunes:author>Setsumi No Kami</itunes:author>
+    <itunes:image href="https://pbs.twimg.com/profile_images/1995353298837061632/u1DJU9sY.jpg"/>
+    <language>en</language>
+    <itunes:explicit>no</itunes:explicit>
+    <itunes:owner>
+      <itunes:name>Alex Waters</itunes:name>
+      <itunes:email>thomas.waters10606@gmail.com</itunes:email>
+    </itunes:owner>
+
+    <!-- Latest episode -->
+    <item>
+      <title>Smiling Shadows, Moonless Nights, and a Killer With Perfect Posture</title>
+      <pubDate>Tue, 02 Dec 2025 05:00:00 GMT</pubDate>
+      <guid isPermaLink="false">reika-2025-12-02</guid>
+      <enclosure url="https://anchor.fm/s/10c3f3eac/podcast/play/latest-audio-url.mp3" length="0" type="audio/mpeg"/>
+      <itunes:duration>5:00</itunes:duration>
+      <description><![CDATA[Tonight's broadcast covers smiling shadows in the alleys, a moonless sky that feels deliberate, and reports of a figure with impeccable posture leaving perfectly aligned footprints in the mist...]]></description>
+    </item>
+
+    <!-- Second episode -->
+    <item>
+      <title>The Moon Blinks, the River Sighs, and Someone Keeps Rearranging the Skeletons</title>
+      <pubDate>Mon, 01 Dec 2025 05:00:00 GMT</pubDate>
+      <guid isPermaLink="false">reika-2025-12-01</guid>
+      <enclosure url="https://d3ctxlq1ktw2nl.cloudfront.net/staging/2025-11-1/413496087-44100-2-e396afbee3536.mp3" length="0" type="audio/mpeg"/>
+      <itunes:duration>5:00</itunes:duration>
+      <description><![CDATA[Tonight’s broadcast brings unusual movement in the cemetery, a sighing sentient river...]]></description>
+    </item>
+
+    <!-- Debut episode -->
+    <item>
+      <title>Moonlight, Misdirection, and Mildly Concerning Omens</title>
+      <pubDate>Sun, 30 Nov 2025 03:42:00 GMT</pubDate>
+      <guid isPermaLink="false">reika-2025-11-30</guid>
+      <enclosure url="https://d3ctxlq1ktw2nl.cloudfront.net/staging/2025-10-30/413442411-44100-2-8d9ae27fb528d.mp3" length="0" type="audio/mpeg"/>
+      <itunes:duration>3:42</itunes:duration>
+      <description><![CDATA[In our debut broadcast, the Host welcomes listeners to Tsukihana Reika...]]></description>
+    </item>
+
+  </channel>
+</rss>
