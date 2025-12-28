@@ -23,7 +23,7 @@ jobs:
         run: |
           python - <<'EOF'
           import feedparser
-          from xml.etree.ElementTree import Element, SubElement
+          from xml.etree.ElementTree import Element, SubElement, ElementTree
           from xml.dom import minidom
           import datetime
 
